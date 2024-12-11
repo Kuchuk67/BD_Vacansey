@@ -1,0 +1,2 @@
+class JSONFiles:
+    pass
