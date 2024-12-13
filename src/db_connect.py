@@ -3,6 +3,8 @@ import os
 from dotenv import load_dotenv
 from typing import  Any
 import re
+from abc import ABC,abstractmethod
+
 
 # Загрузка переменных из .env-файла
 load_dotenv()
@@ -24,8 +26,10 @@ logger_info.setLevel(logging.INFO)
 
 
 
-class DBConnect:
-    """ Соединение с Базой Данных. Проверка на наличие Бд и таблиц в ней"""
+class DBConnect(ABC):
+    """ Соединение с Базой Данных.
+    Проверка на наличие Бд и таблиц в ней
+    Заполнение БД industries """
 
     @staticmethod
     def connect() -> Any:
@@ -40,6 +44,7 @@ class DBConnect:
             logger_info.error(color('red', f"Error: Ошибка соединения с БД {e}" ))
             quit()
         return conn
+
 
     def __init__(self) -> None:
         self.status = 'Ok'
@@ -64,7 +69,7 @@ class DBConnect:
             # если нет БД, то создадим
             cur.execute(f"CREATE DATABASE {SQL_DATABASE} ENCODING 'UTF8' ")
             logger_info.info(color('white', "Создали БД"))
-            # logger_info.info(WHITE + "Создали БД" + SQL_DATABASE + RESET_COLOR)
+
 
         cur.close()
         conn.close()
@@ -115,23 +120,22 @@ class DBConnect:
             else:
                 self.status = 'Ok'
                 logger_info.info(color('white', "Ok"))
-
+                # загрузить таблицу данными
+                # DBConnect.industries_insert(conn, cur)
         cur.close()
         conn.close()
+
         self.status = 'Ok'
 
 
-    '''@property
-    def connect(self) -> object:
-        return self.__connect'''
-
-    def select(self, sql_txt: str) -> list:
+    def select_(self, sql_txt: str) -> list:
         """ Соединяется с БД и
-        отправляет запрос SQL
-        возвращет список строк или пустой список"""
-        lits_word_sql = sql_txt.split(' ')
-        if lits_word_sql[0] != 'SELECT':
+        отправляет SQL запрос.
+        Возвращает список строк или пустой список"""
+        list_word_sql = sql_txt.split(' ')
+        if list_word_sql[0] != 'SELECT':
             self.status = 'Error Неверный формат запроса'
+            logger_info.error(color('red', 'Error Неверный формат запроса'))
             return []
         # .connect с БД
         conn = DBConnect.connect()
@@ -150,10 +154,14 @@ class DBConnect:
             conn.close()
             return rows
 
-    def delete(self):
-        "удаляет данные из таблиц"
+    @abstractmethod
+    def industries_insert(self, cur):
         pass
 
-    def reset(self):
-        "удаляет полностью БД"
+    @abstractmethod
+    def vacancies_insert(self, cur):
+        pass
+
+    @abstractmethod
+    def company_insert(self, cur):
         pass

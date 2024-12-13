@@ -1,3 +1,5 @@
+from src.color import color
+
 class ListData:
         """ Создает список компаний
          выбирает из json только те поля, что будут занесены в БД и список их вакансии"""
@@ -6,16 +8,19 @@ class ListData:
 
         @classmethod
         def company(cls, list_company_json: list) -> list:
-            """ Вывести список кампаний только те поля, что будут занесены в БД"""
+            """ Вывести список кампаний, где только те поля, что будут занесены в БД"""
             result = []
-            print(list_company_json[9])
             for item in list_company_json:
-                result.append({'id': item['id'],
-                               'name': item['name'],
-                               #'description': item['description'],
-                               'site_url': item['site_url'],
-                               'industries': item['industries'],
-                               })
+                #if item.get('id','0') != 0:
+                try:
+                    result.append({'id': item.get('id','0'),
+                                   'name': item['name'],
+                                   #'description': item['description'],
+                                   'site_url': item['site_url'],
+                                   'industries': item.get('industries')[0].get('id'),
+                                   })
+                except Exception:
+                    print(color("Ошибка добавления компании"),item)
             return result
 
 

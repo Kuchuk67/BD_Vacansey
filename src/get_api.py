@@ -31,7 +31,8 @@ class GetAPI:
             if self.__status == 200:
                 #print('.', end='')
                 break
-        result = response.json()
+        if self.__status == 200: result = response.json()
+        else: result = {}
 
         return result
 
