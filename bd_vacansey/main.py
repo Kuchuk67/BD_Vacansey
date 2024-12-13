@@ -1,7 +1,8 @@
 from src.get_api import GetAPI
 from src.list_data import ListData
-from config import LIST_COMPANY, WHITE, YELLOW
+#from config import LIST_COMPANY, WHITE, YELLOW, RESET_COLOR
 from src.indastries import Industries
+from src.db_connect import DBConnect
 
 import logging
 
@@ -13,7 +14,7 @@ logger_info.setLevel(logging.INFO)
 
 
 def main():
-    x = GetAPI()
+    """x = GetAPI()
 
     list_company_json = []
 
@@ -28,10 +29,10 @@ def main():
             er += 1
     logger_info.info(WHITE + "\nЗагрузка компаний завершена")
     if er > 0:
-        logger_info.warning(YELLOW + "Есть не загруженные компании")
-     # print(ListData.company(list_company_json))
+        logger_info.warning(YELLOW + "Есть не загруженные компании"+ RESET_COLOR)
+     # print(ListData.company(list_company_json))"""
 
-
+    q = DBConnect()
 
 
     # с = x.company(780654)
