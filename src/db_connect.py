@@ -24,12 +24,10 @@ logger_info.addHandler(console_handler)
 logger_info.setLevel(logging.INFO)
 
 
-
-
-class DBConnect(ABC):
+class DBConnect():
     """ Соединение с Базой Данных.
     Проверка на наличие Бд и таблиц в ней
-    Заполнение БД industries """
+    """
 
     @staticmethod
     def connect() -> Any:
@@ -88,7 +86,14 @@ class DBConnect(ABC):
         if not ('company',) in rows:
             logger_info.info(color('white', "создается таблица company"))
             try:
-                cur.execute("CREATE TABLE company ( company_id int PRIMARY KEY);")
+                cur.execute("CREATE TABLE company ( "
+                            "company_id int PRIMARY KEY, "
+                            "name varchar(255) NOT NULL, "
+                            "site_url varchar(255), "
+                            "description text, "
+                            "industries character(10), "
+                            "FOREIGN KEY (industries) REFERENCES industries(industries_id) "
+                            ");")
             except Exception as e:
                 self.status = f'Error {e}'
                 logger_info.error(color('red', "Error CREATE TABLE company"))
@@ -98,7 +103,16 @@ class DBConnect(ABC):
         if not ('vacancies',) in rows:
             logger_info.info(color('white', "создается таблица vacancies"))
             try:
-                cur.execute("CREATE TABLE vacancies ( vacancies_id int PRIMARY KEY);")
+                cur.execute("""CREATE TABLE vacancies ( vacancies_id serial PRIMARY KEY,
+vacancies_name varchar(255),
+salary_from int,
+salary_to int,
+address varchar(255),
+snippet varchar(255),
+responsibility varchar(255),
+schedule varchar(80),
+company_id int REFERENCES company(company_id) NOT NULL 
+);""")
             except Exception as e:
                 self.status = f'Error {e}'
                 logger_info.error(color('red', "Error CREATE TABLE vacancies"))
@@ -110,7 +124,7 @@ class DBConnect(ABC):
             logger_info.info(color('white', "создается таблица industries"))
             try:
                 cur.execute("""CREATE TABLE industries (
-                industries_id float PRIMARY KEY, 
+                industries_id character(10) PRIMARY KEY, 
                 industries_name varchar(255) NOT NULL
                 );""")
 
@@ -154,14 +168,7 @@ class DBConnect(ABC):
             conn.close()
             return rows
 
-    @abstractmethod
-    def industries_insert(self, cur):
-        pass
 
-    @abstractmethod
-    def vacancies_insert(self, cur):
-        pass
 
-    @abstractmethod
-    def company_insert(self, cur):
-        pass
+
+

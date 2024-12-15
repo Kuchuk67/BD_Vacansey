@@ -46,25 +46,28 @@ class GetAPI:
 
 
     def vacancies(self, id_hh) -> list:
-        """ Возвращает список словареё с вакансиями
+        """ Возвращает список словарей с вакансиями
             список содержит словари по 100 вакансий"""
         self.__params['employer_id'] = id_hh
+        #print(self.__params)
         response = {}
         result = []
-        while  True:
+        while True:
             # отправка API - запроса по компании 3 попытки
             # https://api.hh.ru/vacancies?employer_id=1740
             for _ in range(3):
                 response = requests.get(self.__url_vac, headers={'User-Agent': 'HH-User-Agent'}, params=self.__params)
                 self.__status = response.status_code
-                print('страница ', self.__params['page'], self.__status)
-                if self.__status == 200:
-                    break
+                #print('страница ', self.__params['page'], self.__status, '= ',len(response.json()))
+                print('.', end='')
+                if self.__status == 200: break
+            if self.__status != 200: break
             data = response.json()
-            if len(data['items']) < 1 :
-                break
+
+            #if len(data['items']) < 1 :  break
             result.append(data)
             #result = response.json()
             self.__params['page'] += 1
-            print(len(data['items']))
+            if len(data['items']) == 0 : break
+        self.__params['page'] = 0
         return result
