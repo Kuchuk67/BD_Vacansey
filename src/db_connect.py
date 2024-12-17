@@ -82,43 +82,6 @@ class DBConnect():
             DBConnect.status = f'Error {e}'
         rows = cur.fetchall()
         # Проверяем есть ли таблицы в БД, если нет - создаем
-        if not ('company',) in rows:
-            logger_info.info(color('white', "создается таблица company"))
-            try:
-                cur.execute("CREATE TABLE company ( "
-                            "company_id int PRIMARY KEY, "
-                            "name varchar(255) NOT NULL, "
-                            "site_url varchar(255), "
-                            "description text, "
-                            "industries character(10), "
-                            "FOREIGN KEY (industries) REFERENCES industries(industries_id) "
-                            ");")
-            except Exception as e:
-                DBConnect.status = f'Error {e}'
-                logger_info.error(color('red', "Error CREATE TABLE company"))
-            else:
-                DBConnect.status = 'Ok'
-                logger_info.info(color('white', "Ok"))
-        if not ('vacancies',) in rows:
-            logger_info.info(color('white', "создается таблица vacancies"))
-            try:
-                cur.execute("""CREATE TABLE vacancies ( vacancies_id serial PRIMARY KEY,
-vacancies_name varchar(255),
-salary_from int,
-salary_to int,
-salary_avg int,
-address varchar(255),
-snippet varchar(255),
-responsibility varchar(255),
-schedule varchar(80),
-company_id int REFERENCES company(company_id) NOT NULL 
-);""")
-            except Exception as e:
-                DBConnect.status = f'Error {e}'
-                logger_info.error(color('red', "Error CREATE TABLE vacancies"))
-            else:
-                DBConnect.status = 'Ok'
-                logger_info.info(color('white', "Ok"))
 
         if not ('industries',) in rows:
             logger_info.info(color('white', "создается таблица industries"))
@@ -136,6 +99,49 @@ company_id int REFERENCES company(company_id) NOT NULL
                 logger_info.info(color('white', "Ok"))
                 # загрузить таблицу данными
                 # DBConnect.industries_insert(conn, cur)
+
+        if not ('company',) in rows:
+            logger_info.info(color('white', "создается таблица company"))
+            try:
+                cur.execute("CREATE TABLE company ( "
+                            "company_id int PRIMARY KEY, "
+                            "name varchar(255) NOT NULL, "
+                            "site_url varchar(255), "
+                            "description text, "
+                            "industries character(10), "
+                            "FOREIGN KEY (industries) REFERENCES industries(industries_id) "
+                            ");")
+            except Exception as e:
+                DBConnect.status = f'Error {e}'
+                logger_info.error(color('red', "Error CREATE TABLE company"))
+            else:
+                DBConnect.status = 'Ok'
+                logger_info.info(color('white', "Ok"))
+
+
+        if not ('vacancies',) in rows:
+            logger_info.info(color('white', "создается таблица vacancies"))
+            try:
+                cur.execute("""CREATE TABLE vacancies ( number_id serial PRIMARY KEY, 
+vacancies_id int, 
+vacancies_name varchar(255),
+salary_from int,
+salary_to int,
+salary_avg int,
+address varchar(255),
+snippet varchar(255),
+responsibility varchar(255),
+schedule varchar(80),
+company_id int REFERENCES company(company_id) NOT NULL 
+);""")
+            except Exception as e:
+                DBConnect.status = f'Error {e}'
+                logger_info.error(color('red', "Error CREATE TABLE vacancies"))
+            else:
+                DBConnect.status = 'Ok'
+                logger_info.info(color('white', "Ok"))
+
+
         cur.close()
         conn.close()
 

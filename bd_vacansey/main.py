@@ -27,28 +27,27 @@ logger_er.setLevel(logging.INFO)"""
 
 def main():
     # Запись в БД отраслей промышленности
-    """ins = DBInsert()
-    with DBInsert.connect() as conn:
+    ins = DBInsert()
+    """with DBInsert.connect() as conn:
         cur = conn.cursor()
         ins.industries_insert(cur)
         conn.commit()"""
 
-    #ins = DBInsert()
 
     # Подключаемся к API
-    x = GetAPI()
+    data_api = GetAPI()
 
-    """# Загрузка  компаний по API  из списка в config.py
-    list_company_json = []
+    # Загрузка  компаний по API  из списка в config.py
+    """list_company_json = []
     logger_info.info(color('white', "Загрузка компаний"))
     er = 0
     # идем по списку компаний
     for item in LIST_COMPANY:
         # загружаем компанию
-        company_json = (x.company(item))
+        company_json = (data_api.company(item))
         if len(company_json) > 0: list_company_json.append(company_json)
         # проверяем ответ на ошибки
-        if DBConnect.status == 200:
+        if data_api.status == 200:
             print('.', end='')
         else:
             print('x', end='')
@@ -56,36 +55,39 @@ def main():
     logger_info.info(color('white', f"\nЗагрузка компаний завершена: {len(list_company_json)}"))
     if er > 0:
         logger_info.warning(color('yellow', f"Есть не загруженные компании: {er}"))
-    list_company = (ListData.company(list_company_json))
-    print(list_company)
+    list_company = (ListData.company(list_company_json))"""
+
 
     # Запись в БД компаний
-    ins = DBInsert()
+    """ ins = DBInsert()
     with DBInsert.connect() as conn:
         cur = conn.cursor()
         ins.company_insert(cur, list_company)
         conn.commit()"""
 
     # загружаем вакансии по API
-    """logger_info.info(color('white', "Загрузка вакансий"))
+    logger_info.info(color('white', "Загрузка вакансий"))
     # Загрузка списка компаний
     companies = DBConnect.select_('SELECT company_id, name FROM company;')
 
     ins = DBInsert()
-    ins.delete()
+
+    ins.remove_db()
+
     for company in companies:
         print(company[0], company[1], end="")
-
-        v = x.vacancies(company[0])
+        # Получаем вакансии по API
+        v = data_api.vacancies(company[0])
         # приводим список к нормальному виду для БД
         vacancies = ListData.vacancy(v)
          # Запись в БД вакансии
+        DBInsert.status = 'Ok'
         with DBInsert.connect() as conn:
             cur = conn.cursor()
             ins.vacancies_insert(cur, vacancies, company[0])
             conn.commit()
         if DBInsert.status == 'Ok': print("Ok")
-        else: print("")"""
+        else: print("")
 
     # print(len(v))
 
@@ -100,17 +102,8 @@ def main():
     # l = x.vacancies(1740)
     # print(с)
 
-    # ненужно
-    """x = Industries()
-    x.load()
-    print(Industries.dict_industries)"""
 
 
-    """ x = DBConnect.select_('SELECT * FROM industries')
-    if DBConnect.status == 'Error':
-        logger_info.error(color('red', "Ошибка SQL запроса "))
-    print(x)
-    """
 
 
     select = DBManager()

@@ -11,7 +11,7 @@ logger_info.setLevel(logging.INFO)
 
 class DBManager(DBConnect):
     def get_companies_and_vacancies_count(self):
-        """ получает список всех компаний и количество вакансий у каждой компании."""
+        """ Получает список всех компаний и количество вакансий у каждой компании."""
 
         sql = """SELECT company.name, count(vacancies.vacancies_id) 
 FROM vacancies RiGHT JOIN company ON company.company_id = vacancies.company_id   
@@ -23,7 +23,7 @@ GROUP BY company.name """
 
 
     def get_all_vacancies(self):
-        """ получает список всех вакансий с указанием названия компании,
+        """ Получает список всех вакансий с указанием названия компании,
          названия вакансии и зарплаты и ссылки на вакансию. hh.ru/vacancy/112968986"""
         sql = """SELECT AVG(vacancies.salary_avg) FROM vacancies WHERE salary_avg > 0 """
         #sql = """SELECT company.name, vacancies_name, salary_avg, vacancies_id  
@@ -35,7 +35,7 @@ GROUP BY company.name """
         return result
 
     def get_avg_salary(self):
-        """ получает среднюю зарплату по вакансиям."""
+        """ Получает среднюю зарплату по вакансиям."""
         #sql = """SELECT company.name, AVG(vacancies.salary_avg)
 #FROM vacancies RiGHT JOIN company ON company.company_id = vacancies.company_id
 #GROUP BY company.name """
@@ -47,7 +47,7 @@ GROUP BY company.name """
 
 
     def get_vacancies_with_higher_salary(self, salary: int):
-        """ получает список всех вакансий, у которых зарплата выше средней по всем вакансиям."""
+        """ Получает список всех вакансий, у которых зарплата выше средней по всем вакансиям."""
         sql = """SELECT vacancies_name, salary_avg  FROM vacancies WHERE salary_avg > """  + str(salary)
         DBConnect.status = ''
         result = DBConnect.select_(sql)
@@ -57,7 +57,7 @@ GROUP BY company.name """
 
     def get_vacancies_with_keyword(self, word:str):
 
-        """получает список всех вакансий, в названии которых содержатся переданные в метод слова, например python."""
+        """ Получает список всех вакансий, в названии которых содержатся переданные в метод слова, например python."""
         sql = """SELECT vacancies_name,snippet, responsibility, schedule  FROM vacancies 
 WHERE snippet  LIKE '%s'
 OR responsibility  LIKE '%s'

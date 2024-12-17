@@ -13,6 +13,7 @@ logger_info.setLevel(logging.INFO)
 class DBInsert(DBConnect):
     """ Подключается к БД
     Содержит методы для записи данных в таблицы"""
+
     # def __init__(self):
     # super.__init__()
 
@@ -33,7 +34,6 @@ class DBInsert(DBConnect):
         sql = sql + ";"
         cur.execute(sql)
 
-
     def company_insert(self, cur, list_companies):
         """ Заполнение БД company"""
         cur.execute('delete FROM vacancies;')
@@ -41,6 +41,8 @@ class DBInsert(DBConnect):
 
         i, separate, sql = 0, "", "INSERT INTO company VALUES "
         for list_company in list_companies:
+
+
             sql = sql + (f"{separate} ({list_company.get('company_id')}, '{list_company.get('name')}', "
                          f"'{list_company.get('site_url')}', '{list_company.get('description')}', "
                          f"'{list_company.get('industries')}' )")
@@ -48,33 +50,47 @@ class DBInsert(DBConnect):
         sql = sql + ";"
         cur.execute(sql)
 
+
     def vacancies_insert(self, cur, vacancies, company_id):
         """ Заполнение БД vacancies"""
-        #cur.execute('delete FROM vacancies;')
+        # cur.execute('delete FROM vacancies;')
         i, separate, sql = 0, " ", "INSERT INTO vacancies VALUES "
         for vacancy in vacancies:
-
-            sql = sql + (f"{separate} ({vacancy.get('vacancies_id')},"
-                         f"'{vacancy.get('vacancies_name')}',"
-                         f"{vacancy.get('salary_from')},"
-                         f"{vacancy.get('salary_to')},"
-                         f"{vacancy.get('salary_avg')},"
-                         f"'{vacancy.get('address')}',"
-                         f"'{vacancy.get('snippet')}',"
-                         f"'{vacancy.get('responsibility')}', "
-                         f"'{vacancy.get('schedule')}', "
-                         f"{int(company_id)} )")
+            #if vacancy.get('vacancies_id') not in i:
+                #i.append(vacancy.get('vacancies_id'))
+            i +=1
+            sql = sql + (f"{separate} ( DEFAULT ,"
+                             f"{vacancy.get('vacancies_id')},"
+                             f"'{vacancy.get('vacancies_name')}',"
+                             f"{vacancy.get('salary_from')},"
+                             f"{vacancy.get('salary_to')},"
+                             f"{vacancy.get('salary_avg')},"
+                             f"'{vacancy.get('address')}',"
+                             f"'{vacancy.get('snippet')}',"
+                             f"'{vacancy.get('responsibility')}', "
+                             f"'{vacancy.get('schedule')}', "
+                             f"{int(company_id)} )")
             separate = ", "
+
+            #else:
+                #print("+++++")
         sql = sql + ";"
-        try:
-            cur.execute(sql)
-        except Exception as er:
-            DBInsert.status  = 'Error'
-            logger_info.error(color('red', f"Error: Ошибка записи вакансии в БД {er}"))
+
+        f = open(str(company_id), 'w', encoding='utf-8')  # открытие в режиме записи
+        f.write(sql)
+        f.close()
+
+        if i > 0:
+            try:
+                cur.execute(sql)
+            except Exception as er:
+                DBInsert.status = 'Error'
+                logger_info.error(color('red', f"Ошибка записи вакансии в БД.\n {er}"))
+        else:
+            print('API вернул пустую строку')
 
 
-
-    def delete(self):
+    def remove_db(self):
         """ удаляет данные из таблиц"""
         sql_txt = "delete FROM vacancies"
         # .connect с БД
@@ -87,6 +103,7 @@ class DBInsert(DBConnect):
         else:
             print("удалено vacancies")
             conn.commit()
+
 
     def reset(self):
         """удаляет полностью БД"""
