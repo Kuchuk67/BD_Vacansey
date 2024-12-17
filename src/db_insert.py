@@ -18,6 +18,7 @@ class DBInsert(DBConnect):
 
     def industries_insert(self, cur) -> None:
         """  Заполнение БД industries"""
+        DBInsert.status = 'Ok'
         # Загрузка API отраслей промышленности
         industries = Industries()
         logger_info.info(color('white', industries.load()))
@@ -52,14 +53,12 @@ class DBInsert(DBConnect):
         #cur.execute('delete FROM vacancies;')
         i, separate, sql = 0, " ", "INSERT INTO vacancies VALUES "
         for vacancy in vacancies:
-            #snippet =
-            #print(snippet)
-            #snippet = snippet.replace("'", " ")
 
             sql = sql + (f"{separate} ({vacancy.get('vacancies_id')},"
                          f"'{vacancy.get('vacancies_name')}',"
                          f"{vacancy.get('salary_from')},"
                          f"{vacancy.get('salary_to')},"
+                         f"{vacancy.get('salary_avg')},"
                          f"'{vacancy.get('address')}',"
                          f"'{vacancy.get('snippet')}',"
                          f"'{vacancy.get('responsibility')}', "
@@ -67,13 +66,27 @@ class DBInsert(DBConnect):
                          f"{int(company_id)} )")
             separate = ", "
         sql = sql + ";"
-        #print(sql)
-        cur.execute(sql)
+        try:
+            cur.execute(sql)
+        except Exception as er:
+            DBInsert.status  = 'Error'
+            logger_info.error(color('red', f"Error: Ошибка записи вакансии в БД {er}"))
+
 
 
     def delete(self):
         """ удаляет данные из таблиц"""
-        pass
+        sql_txt = "delete FROM vacancies"
+        # .connect с БД
+        conn = DBConnect.connect()
+        cur = conn.cursor()
+        try:
+            cur.execute(sql_txt)
+        except Exception:
+            pass
+        else:
+            print("удалено vacancies")
+            conn.commit()
 
     def reset(self):
         """удаляет полностью БД"""

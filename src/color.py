@@ -1,3 +1,4 @@
+from config import COLOR
 # color
 
 
@@ -10,4 +11,7 @@ def color(color_,txt) -> str:
         'reset': "\033[0m".format(),
     }
     cl = colors.get(color_,'')
-    return f"{cl} {txt} {colors['reset']}"
+    if COLOR:
+        return f"{cl} {txt} {colors['reset']}"
+    else:
+        return txt

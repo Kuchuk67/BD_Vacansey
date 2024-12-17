@@ -64,6 +64,10 @@ class ListData:
                         schedule = item1.get('schedule').get('name')
                         if not schedule: schedule = ''
                         schedule = schedule.replace("'", " ")
+                        a, b = salary_from, salary_to
+                        if a == 0: a = b
+                        if b == 0: b = a
+                        salary_avg = (a + b) / 2
 
 
 
@@ -71,6 +75,7 @@ class ListData:
                                            'vacancies_name': item1.get('name'),
                                            'salary_from': salary_from,
                                            'salary_to': salary_to,
+                                           'salary_avg': salary_avg,
                                            'address': address,
                                            'snippet': snippet,
                                            'responsibility': responsibility,

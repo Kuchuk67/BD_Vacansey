@@ -23,7 +23,6 @@ console_handler = logging.StreamHandler()
 logger_info.addHandler(console_handler)
 logger_info.setLevel(logging.INFO)
 
-
 class DBConnect():
     """ Соединение с Базой Данных.
     Проверка на наличие Бд и таблиц в ней
@@ -45,7 +44,7 @@ class DBConnect():
 
 
     def __init__(self) -> None:
-        self.status = 'Ok'
+        DBConnect.status = 'Ok'
         self.__cur = None
         try:
             conn = psycopg2.connect(
@@ -62,7 +61,7 @@ class DBConnect():
         try:
             cur.execute("SELECT datname  FROM pg_database WHERE datname = %s", (SQL_DATABASE,))
         except Exception as e:
-            self.status = f'Error {e}'
+            DBConnect.status = f'Error {e}'
         if not cur.fetchone():
             # если нет БД, то создадим
             cur.execute(f"CREATE DATABASE {SQL_DATABASE} ENCODING 'UTF8' ")
@@ -80,7 +79,7 @@ class DBConnect():
         try:
             cur.execute("SELECT tablename FROM pg_tables WHERE schemaname = 'public'")
         except Exception as e:
-            self.status = f'Error {e}'
+            DBConnect.status = f'Error {e}'
         rows = cur.fetchall()
         # Проверяем есть ли таблицы в БД, если нет - создаем
         if not ('company',) in rows:
@@ -95,10 +94,10 @@ class DBConnect():
                             "FOREIGN KEY (industries) REFERENCES industries(industries_id) "
                             ");")
             except Exception as e:
-                self.status = f'Error {e}'
+                DBConnect.status = f'Error {e}'
                 logger_info.error(color('red', "Error CREATE TABLE company"))
             else:
-                self.status = 'Ok'
+                DBConnect.status = 'Ok'
                 logger_info.info(color('white', "Ok"))
         if not ('vacancies',) in rows:
             logger_info.info(color('white', "создается таблица vacancies"))
@@ -107,6 +106,7 @@ class DBConnect():
 vacancies_name varchar(255),
 salary_from int,
 salary_to int,
+salary_avg int,
 address varchar(255),
 snippet varchar(255),
 responsibility varchar(255),
@@ -114,10 +114,10 @@ schedule varchar(80),
 company_id int REFERENCES company(company_id) NOT NULL 
 );""")
             except Exception as e:
-                self.status = f'Error {e}'
+                DBConnect.status = f'Error {e}'
                 logger_info.error(color('red', "Error CREATE TABLE vacancies"))
             else:
-                self.status = 'Ok'
+                DBConnect.status = 'Ok'
                 logger_info.info(color('white', "Ok"))
 
         if not ('industries',) in rows:
@@ -129,26 +129,27 @@ company_id int REFERENCES company(company_id) NOT NULL
                 );""")
 
             except Exception as e:
-                self.status = f'Error {e}'
+                DBConnect.status = f'Error {e}'
                 logger_info.error(color('red', "Error CREATE TABLE industries"))
             else:
-                self.status = 'Ok'
+                DBConnect.status = 'Ok'
                 logger_info.info(color('white', "Ok"))
                 # загрузить таблицу данными
                 # DBConnect.industries_insert(conn, cur)
         cur.close()
         conn.close()
 
-        self.status = 'Ok'
+        DBConnect.status = 'Ok'
 
-
-    def select_(self, sql_txt: str) -> list:
+    @staticmethod
+    def select_(sql_txt: str) -> list:
         """ Соединяется с БД и
         отправляет SQL запрос.
-        Возвращает список строк или пустой список"""
+        Возвращает список строк или пустой список
+        Записывает статус ответа в DBConnect.status"""
         list_word_sql = sql_txt.split(' ')
         if list_word_sql[0] != 'SELECT':
-            self.status = 'Error Неверный формат запроса'
+            DBConnect.status = 'Error Неверный формат запроса'
             logger_info.error(color('red', 'Error Неверный формат запроса'))
             return []
         # .connect с БД
@@ -157,13 +158,13 @@ company_id int REFERENCES company(company_id) NOT NULL
         try:
             cur.execute(sql_txt)
         except Exception:
-            self.status = 'Error'
+            DBConnect.status = 'Error'
             cur.close()
             conn.close()
             return []
         else:
             rows = cur.fetchall()
-            self.status = 'Ok'
+            DBConnect.status = 'Ok'
             cur.close()
             conn.close()
             return rows

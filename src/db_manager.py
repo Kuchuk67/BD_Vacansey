@@ -1,30 +1,81 @@
-from db_connect import DBConnect
+from src.db_connect import DBConnect
+from src.color import color
+import  logging
+logger_info = logging.getLogger(__name__)
+# Создаем хендлер для вывода в консоль
+console_handler = logging.StreamHandler()
+# console_formatter = logging.Formatter(' %(message)s ')
+# console_handler.setFormatter(console_formatter)
+logger_info.addHandler(console_handler)
+logger_info.setLevel(logging.INFO)
 
 class DBManager(DBConnect):
     def get_companies_and_vacancies_count(self):
         """ получает список всех компаний и количество вакансий у каждой компании."""
-        """ SELECT company.name, count(vacancies.vacancies_id) 
-FROM vacancies JOIN company ON company.company_id=vacancies.company_id   
+
+        sql = """SELECT company.name, count(vacancies.vacancies_id) 
+FROM vacancies RiGHT JOIN company ON company.company_id = vacancies.company_id   
 GROUP BY company.name """
-        pass
+        DBConnect.status = ''
+        result = DBConnect.select_(sql)
+        DBManager.error_handling(result, DBConnect.status)
+        return result
+
+
     def get_all_vacancies(self):
         """ получает список всех вакансий с указанием названия компании,
-         названия вакансии и зарплаты и ссылки на вакансию."""
-        """ SELECT company.name, vacancies_name, salary_from, salary_to  
-FROM vacancies JOIN company ON company.company_id=vacancies.company_id; """
-        pass
+         названия вакансии и зарплаты и ссылки на вакансию. hh.ru/vacancy/112968986"""
+        sql = """SELECT AVG(vacancies.salary_avg) FROM vacancies WHERE salary_avg > 0 """
+        #sql = """SELECT company.name, vacancies_name, salary_avg, vacancies_id  
+        
+        #FROM vacancies JOIN company ON company.company_id=vacancies.company_id; """
+        DBConnect.status = ''
+        result = DBConnect.select_(sql)
+        DBManager.error_handling(result, DBConnect.status)
+        return result
+
     def get_avg_salary(self):
         """ получает среднюю зарплату по вакансиям."""
-        """ SELECT AVG(salary_from) FROM vacancies; """
-        pass
-    def get_vacancies_with_higher_salary(self):
+        #sql = """SELECT company.name, AVG(vacancies.salary_avg)
+#FROM vacancies RiGHT JOIN company ON company.company_id = vacancies.company_id
+#GROUP BY company.name """
+        sql = """SELECT AVG(salary_avg)  FROM vacancies WHERE salary_avg > 0 """
+        DBConnect.status = ''
+        result = DBConnect.select_(sql)
+        DBManager.error_handling(result, DBConnect.status)
+        return int(result[0][0])
+
+
+    def get_vacancies_with_higher_salary(self, salary: int):
         """ получает список всех вакансий, у которых зарплата выше средней по всем вакансиям."""
-        """ SELECT vacancies_name,salary_from  FROM vacancies WHERE salary_from > 56737 """
-        pass
-    def get_vacancies_with_keyword(self):
+        sql = """SELECT vacancies_name, salary_avg  FROM vacancies WHERE salary_avg > """  + str(salary)
+        DBConnect.status = ''
+        result = DBConnect.select_(sql)
+        DBManager.error_handling(result, DBConnect.status)
+        return result
+
+
+    def get_vacancies_with_keyword(self, word:str):
+
         """получает список всех вакансий, в названии которых содержатся переданные в метод слова, например python."""
-        """ SELECT vacancies_name,snippet, responsibility, schedule  FROM vacancies 
-WHERE snippet  LIKE '%python%'
-OR responsibility  LIKE '%python%'
-OR schedule  LIKE '%python%'"""
-        pass
+        sql = """SELECT vacancies_name,snippet, responsibility, schedule  FROM vacancies 
+WHERE snippet  LIKE '%s'
+OR responsibility  LIKE '%s'
+OR schedule  LIKE '%s'
+OR vacancies_name  LIKE '%s'
+""" % ( word,word,word,word,)
+
+        DBConnect.status = ''
+        result = DBConnect.select_(sql)
+        DBManager.error_handling(result, DBConnect.status)
+        return result
+
+
+    @staticmethod
+    def error_handling(result, status):
+        """ Выводит сообщение об ошибке при статусе отличном от 'Ok'
+         или предупреждение при возвращении пустого ответа"""
+        if status != 'Ok':
+            logger_info.error(color('red', f"Ошибка SQL-запроса"))
+        if status == 'Ok' and result == []:
+            logger_info.warning(color('yellow', "SQL-запрос вернулся пустой"))
