@@ -25,10 +25,9 @@ GROUP BY company.name """
     def get_all_vacancies(self):
         """ Получает список всех вакансий с указанием названия компании,
          названия вакансии и зарплаты и ссылки на вакансию. hh.ru/vacancy/112968986"""
-        sql = """SELECT AVG(vacancies.salary_avg) FROM vacancies WHERE salary_avg > 0 """
-        #sql = """SELECT company.name, vacancies_name, salary_avg, vacancies_id  
-        
-        #FROM vacancies JOIN company ON company.company_id=vacancies.company_id; """
+        #sql = """SELECT AVG(vacancies.salary_avg) FROM vacancies WHERE salary_avg > 0 """
+        sql = """SELECT company.name, vacancies_name, salary_avg, 'https://hh.ru/vacancy/' || vacancies_id as url          
+        FROM vacancies JOIN company ON company.company_id=vacancies.company_id; """
         DBConnect.status = ''
         result = DBConnect.select_(sql)
         DBManager.error_handling(result, DBConnect.status)
@@ -58,7 +57,7 @@ GROUP BY company.name """
     def get_vacancies_with_keyword(self, word:str):
 
         """ Получает список всех вакансий, в названии которых содержатся переданные в метод слова, например python."""
-        sql = """SELECT vacancies_name,snippet, responsibility, schedule  FROM vacancies 
+        sql = """SELECT  vacancies_name, salary_avg, snippet, responsibility, schedule, 'https://hh.ru/vacancy/' || vacancies_id as url  FROM vacancies 
 WHERE snippet  LIKE '%s'
 OR responsibility  LIKE '%s'
 OR schedule  LIKE '%s'

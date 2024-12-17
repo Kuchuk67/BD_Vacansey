@@ -107,7 +107,6 @@ class DBConnect():
                             "company_id int PRIMARY KEY, "
                             "name varchar(255) NOT NULL, "
                             "site_url varchar(255), "
-                            "description text, "
                             "industries character(10), "
                             "FOREIGN KEY (industries) REFERENCES industries(industries_id) "
                             ");")
@@ -175,6 +174,32 @@ company_id int REFERENCES company(company_id) NOT NULL
             conn.close()
             return rows
 
+    def drop_all(self):
+        """удаляет полностью БД"""
+
+        try:
+            conn = psycopg2.connect(
+                host=SQL_HOST,
+                database=SQL_DATABASE_ADMIN,
+                user=SQL_USER,
+                password=SQL_PASS
+            )
+        except Exception as e:
+            logger_info.error(color('red', f"Error: Ошибка соединения с БД {e}"))
+            quit()
+        conn.autocommit = True
+        cur = conn.cursor()
+        try:
+            cur.execute("""DROP DATABASE  %s""" % (SQL_DATABASE,))
+        except Exception as e:
+            DBConnect.status = f'Error {e}'
+            logger_info.error(color('red', f"Error: Ошибка удаления БД {e}"))
+        else:
+            print('БД удалена. Работа приложения завершена.')
+            quit()
+
+        cur.close()
+        conn.close()
 
 
 

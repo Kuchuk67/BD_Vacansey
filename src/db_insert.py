@@ -14,25 +14,33 @@ class DBInsert(DBConnect):
     """ Подключается к БД
     Содержит методы для записи данных в таблицы"""
 
-    # def __init__(self):
-    # super.__init__()
+    #def __init__(self):
+        #super().__init__()
 
     def industries_insert(self, cur) -> None:
         """  Заполнение БД industries"""
         DBInsert.status = 'Ok'
         # Загрузка API отраслей промышленности
         industries = Industries()
+
         logger_info.info(color('white', industries.load()))
 
         # Заполнение БД industries
-        cur.execute('delete FROM industries;')
+        #cur.execute('delete FROM industries;')
+        #DBInsert.remove_db(['v','c','i'])
 
         i, separate, sql = 0, "", "INSERT INTO industries VALUES "
         for key, value in Industries.dict_industries.items():
             sql = sql + f"{separate} ({key}, '{value}')"
             separate = ", "
         sql = sql + ";"
-        cur.execute(sql)
+        #print(sql)
+        try:
+            cur.execute(sql)
+        except Exception as er:
+            logger_info.error(color('red', f"Ошибка записи отраслей в БД.\n {er}"))
+
+
 
     def company_insert(self, cur, list_companies):
         """ Заполнение БД company"""
@@ -76,9 +84,10 @@ class DBInsert(DBConnect):
                 #print("+++++")
         sql = sql + ";"
 
-        f = open(str(company_id), 'w', encoding='utf-8')  # открытие в режиме записи
+        """ # Код для проверки того, что записывается в базу вакансии
+        f = open(str(company_id), 'w', encoding='utf-8') 
         f.write(sql)
-        f.close()
+        f.close()"""
 
         if i > 0:
             try:
@@ -90,21 +99,42 @@ class DBInsert(DBConnect):
             print('API вернул пустую строку')
 
 
-    def remove_db(self):
+    def remove_db(self, db_for_del: list):
         """ удаляет данные из таблиц"""
-        sql_txt = "delete FROM vacancies"
+
         # .connect с БД
         conn = DBConnect.connect()
         cur = conn.cursor()
-        try:
-            cur.execute(sql_txt)
-        except Exception:
-            pass
-        else:
-            print("удалено vacancies")
-            conn.commit()
+        if 'v' in db_for_del:
+            try:
+                sql_txt = "delete FROM vacancies"
+                cur.execute(sql_txt)
+            except Exception as er:
+                logger_info.error(color('red', f"Ошибка удаления данных таблицы vacancies.\n {er}"))
+            else:
+                print("удалено vacancies")
+                conn.commit()
+
+        if 'c' in db_for_del:
+            try:
+                sql_txt = "delete FROM company"
+                cur.execute(sql_txt)
+            except Exception as er:
+                logger_info.error(color('red', f"Ошибка удаления данных таблицы company.\n {er}"))
+            else:
+                print("удалено vacancies")
+                conn.commit()
+
+        if 'i' in db_for_del:
+            try:
+                sql_txt = "delete FROM industries"
+                cur.execute(sql_txt)
+            except Exception:
+                logger_info.error(color('red', f"Ошибка удаления данных таблицы industries.\n {er}"))
+            else:
+                print("удалено vacancies")
+                conn.commit()
 
 
-    def reset(self):
-        """удаляет полностью БД"""
-        pass
+
+

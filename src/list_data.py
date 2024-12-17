@@ -15,7 +15,6 @@ class ListData:
                 try:
                     result.append({'company_id': item.get('id','0'),
                                    'name': item.get('name'),
-                                   'description': '###', #item.get('description'),
                                    'site_url': item.get('site_url'),
                                    'industries': item.get('industries')[0].get('id'),
                                    })
