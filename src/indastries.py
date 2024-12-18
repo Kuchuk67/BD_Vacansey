@@ -2,6 +2,7 @@ import os
 import requests
 import json
 from typing import Any
+from src.color import color
 
 #from config import PATH_HOME
 import re
@@ -38,7 +39,7 @@ class Industries:
         response = requests.get(self.__url, headers=self.__headers)
         self.status = response.status_code
         if self.status == 200:
-            print("Загрузка отраслей промышленности - ОК")
+            print(color('grey', "Загрузка отраслей промышленности"))
             industry = response.json()
             Industries.industries(industry)
             return 'Ok'

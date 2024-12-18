@@ -22,8 +22,8 @@ class DBInsert(DBConnect):
         DBInsert.status = 'Ok'
         # Загрузка API отраслей промышленности
         industries = Industries()
-
-        logger_info.info(color('white', industries.load()))
+        industries_load = industries.load()
+        logger_info.info(color('green', industries_load))
 
         # Заполнение БД industries
         #cur.execute('delete FROM industries;')
@@ -52,7 +52,7 @@ class DBInsert(DBConnect):
 
 
             sql = sql + (f"{separate} ({list_company.get('company_id')}, '{list_company.get('name')}', "
-                         f"'{list_company.get('site_url')}', '{list_company.get('description')}', "
+                         f"'{list_company.get('site_url')}',  "
                          f"'{list_company.get('industries')}' )")
             separate = ", "
         sql = sql + ";"
@@ -100,7 +100,12 @@ class DBInsert(DBConnect):
 
 
     def remove_db(self, db_for_del: list):
-        """ удаляет данные из таблиц"""
+        """ удаляет данные из таблиц. Вход список с литерами таблиц: ['v', 'c', 'i']:
+        v - удалить данные в таблице vacancies;
+        c - удалить company;
+        i - удалить industries;
+
+        """
 
         # .connect с БД
         conn = DBConnect.connect()
@@ -112,7 +117,7 @@ class DBInsert(DBConnect):
             except Exception as er:
                 logger_info.error(color('red', f"Ошибка удаления данных таблицы vacancies.\n {er}"))
             else:
-                print("удалено vacancies")
+                #print("удалено vacancies")
                 conn.commit()
 
         if 'c' in db_for_del:
@@ -122,7 +127,7 @@ class DBInsert(DBConnect):
             except Exception as er:
                 logger_info.error(color('red', f"Ошибка удаления данных таблицы company.\n {er}"))
             else:
-                print("удалено vacancies")
+                #print("удалено company")
                 conn.commit()
 
         if 'i' in db_for_del:
@@ -132,7 +137,7 @@ class DBInsert(DBConnect):
             except Exception:
                 logger_info.error(color('red', f"Ошибка удаления данных таблицы industries.\n {er}"))
             else:
-                print("удалено vacancies")
+                #print("удалено industries")
                 conn.commit()
 
 

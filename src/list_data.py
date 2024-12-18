@@ -87,6 +87,3 @@ class ListData:
             return result
 
 
-        def add(self, dict_about_company, dict_vacancies) -> None:
-            """ Добавить в список кампаний новую позицию"""
-            pass

@@ -65,7 +65,7 @@ class DBConnect():
         if not cur.fetchone():
             # если нет БД, то создадим
             cur.execute(f"CREATE DATABASE {SQL_DATABASE} ENCODING 'UTF8' ")
-            logger_info.info(color('white', "Создали БД"))
+            logger_info.info(color('grey', "Создали БД"))
 
 
         cur.close()
@@ -84,7 +84,7 @@ class DBConnect():
         # Проверяем есть ли таблицы в БД, если нет - создаем
 
         if not ('industries',) in rows:
-            logger_info.info(color('white', "создается таблица industries"))
+            logger_info.info(color('grey',"создается таблица industries") )
             try:
                 cur.execute("""CREATE TABLE industries (
                 industries_id character(10) PRIMARY KEY, 
@@ -96,12 +96,12 @@ class DBConnect():
                 logger_info.error(color('red', "Error CREATE TABLE industries"))
             else:
                 DBConnect.status = 'Ok'
-                logger_info.info(color('white', "Ok"))
+                logger_info.info(color('green', "Ok"))
                 # загрузить таблицу данными
                 # DBConnect.industries_insert(conn, cur)
 
         if not ('company',) in rows:
-            logger_info.info(color('white', "создается таблица company"))
+            logger_info.info(color('grey',"создается таблица company"))
             try:
                 cur.execute("CREATE TABLE company ( "
                             "company_id int PRIMARY KEY, "
@@ -115,11 +115,11 @@ class DBConnect():
                 logger_info.error(color('red', "Error CREATE TABLE company"))
             else:
                 DBConnect.status = 'Ok'
-                logger_info.info(color('white', "Ok"))
+                logger_info.info(color('green', "Ok"))
 
 
         if not ('vacancies',) in rows:
-            logger_info.info(color('white', "создается таблица vacancies"))
+            logger_info.info(color('grey',"создается таблица vacancies"))
             try:
                 cur.execute("""CREATE TABLE vacancies ( number_id serial PRIMARY KEY, 
 vacancies_id int, 
@@ -138,7 +138,7 @@ company_id int REFERENCES company(company_id) NOT NULL
                 logger_info.error(color('red', "Error CREATE TABLE vacancies"))
             else:
                 DBConnect.status = 'Ok'
-                logger_info.info(color('white', "Ok"))
+                logger_info.info(color('green', "Ok"))
 
 
         cur.close()

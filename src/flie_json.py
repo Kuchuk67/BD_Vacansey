@@ -22,7 +22,7 @@ class FileJSON():
         except Exception as er:
             return f"Ошибка записи файла; {er}"
         else:
-            return file_name + ' - Ok'
+            return file_name + ' - Сохранено'
 
     def dict_for_json(self, q: list, name_colum: list) -> list:
         """
