@@ -64,6 +64,9 @@ def main():
                     if OUTPUT_ON_MONITOR:
                         for row in x:
                             print(f"{color('white', row[0])} - {row[1]} вакансий")
+                    dict_for_json = file.dict_for_json(x, ['company', 'vacancies_count'])
+                    status = file.save(dict_for_json, 'get_companies_and_vacancies_count.json')
+                    print(status)
 
                 if user_input == '2': # 2. Все вакансии
                     x = select.get_all_vacancies()

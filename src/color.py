@@ -3,6 +3,8 @@ from config import COLOR
 
 
 def color(color_,txt) -> str:
+    """ Делает выводимый текст цветным
+    ввод: цвет: str, текст: str"""
     colors = {
         'white': "\033[97m".format(),
         'red': "\033[31m".format(),

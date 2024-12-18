@@ -30,6 +30,7 @@ class DBConnect():
 
     @staticmethod
     def connect() -> Any:
+        """ Устанавливает соединение с БД"""
         try:
             conn = psycopg2.connect(
                 host=SQL_HOST,

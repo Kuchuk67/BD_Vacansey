@@ -9,7 +9,7 @@ import re
 
 
 class Industries:
-    """ Класс определения id региона"""
+    """ Класс определения id отрасли промышленности"""
     dict_industries = {}
 
     def __init__(self) -> None:

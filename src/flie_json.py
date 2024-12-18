@@ -4,6 +4,7 @@ from config import PATH_HOME
 import json
 
 class FileJSON():
+    """ Класс матодов сохранения словарей в json-файл"""
     def __init__(self):
         if not os.path.exists(os.path.join(PATH_HOME, "data")):
             os.mkdir(os.path.join(PATH_HOME, "data"))

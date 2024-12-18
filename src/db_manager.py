@@ -10,6 +10,7 @@ logger_info.addHandler(console_handler)
 logger_info.setLevel(logging.INFO)
 
 class DBManager(DBConnect):
+    """ Класс методов работы с БД"""
     def get_companies_and_vacancies_count(self):
         """ Получает список всех компаний и количество вакансий у каждой компании."""
 
