@@ -1,5 +1,6 @@
 from src.color import color
 
+
 class ListData:
         """ Подготавливает  список для записи в БД.
          Выбирает из json только те поля, что будут занесены в БД и список их вакансии"""
@@ -19,11 +20,11 @@ class ListData:
                                    'industries': item.get('industries')[0].get('id'),
                                    })
                 except Exception:
-                    print(color("Ошибка добавления компании"),item)
+                    print(color("red","Ошибка добавления компании"),item)
             return result
 
         @classmethod
-        def vacancy(cla, list_vacancy_json):
+        def vacancy(cls, list_vacancy_json:list) -> list:
             """ Подготавливает список вакансии для записи в БД.
             Выбирает из json только те поля, что будут занесены в БД вакансии
             Несуществующие адреса заменяет пробелами

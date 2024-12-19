@@ -1,7 +1,8 @@
+import logging
+from typing import Any
+from src.color import color
 from src.db_connect import DBConnect
 from src.indastries import Industries
-import logging
-from src.color import color
 
 logger_info = logging.getLogger(__name__)
 # Создаем хендлер для вывода в консоль
@@ -15,8 +16,9 @@ class DBInsert(DBConnect):
     Содержит методы для записи данных в таблицы"""
 
 
-    def industries_insert(self, cur) -> None:
+    def industries_insert(self, cur:Any) -> None:
         """  Заполнение БД industries"""
+        print("========",type(cur))
         DBInsert.status = 'Ok'
         # Загрузка API отраслей промышленности
         industries = Industries()
@@ -37,7 +39,7 @@ class DBInsert(DBConnect):
 
 
 
-    def company_insert(self, cur, list_companies):
+    def company_insert(self, cur:Any, list_companies: list) -> None:
         """ Заполнение БД company"""
         i, separate, sql = 0, "", "INSERT INTO company VALUES "
         for list_company in list_companies:
@@ -50,7 +52,7 @@ class DBInsert(DBConnect):
         cur.execute(sql)
 
 
-    def vacancies_insert(self, cur, vacancies, company_id):
+    def vacancies_insert(self, cur:Any, vacancies:list, company_id:int) -> None:
         """ Заполнение БД vacancies"""
         # cur.execute('delete FROM vacancies;')
         i, separate, sql = 0, " ", "INSERT INTO vacancies VALUES "
@@ -85,7 +87,7 @@ class DBInsert(DBConnect):
             print('API вернул пустую строку')
 
 
-    def remove_db(self, db_for_del: list):
+    def remove_db(self, db_for_del: list) -> None:
         """ удаляет данные из таблиц. Вход список с литерами таблиц: ['v', 'c', 'i']:
         v - удалить данные в таблице vacancies;
         c - удалить company;
@@ -120,7 +122,7 @@ class DBInsert(DBConnect):
             try:
                 sql_txt = "delete FROM industries"
                 cur.execute(sql_txt)
-            except Exception:
+            except Exception as er:
                 logger_info.error(color('red', f"Ошибка удаления данных таблицы industries.\n {er}"))
             else:
                 #print("удалено industries")

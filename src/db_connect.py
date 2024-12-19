@@ -1,20 +1,21 @@
-import psycopg2
 import os
-from dotenv import load_dotenv
-from typing import  Any
 import re
-from abc import ABC,abstractmethod
+# from abc import ABC, abstractmethod
+from typing import Any
 
+import psycopg2
+from dotenv import load_dotenv
 
 # Загрузка переменных из .env-файла
 load_dotenv()
 SQL_HOST = os.getenv("SQL_HOST")
-SQL_DATABASE = re.sub("[^A-Za-z0-9]", "", os.getenv("SQL_DATABASE"))
+SQL_DATABASE = re.sub("[^A-Za-z0-9]", "", str(os.getenv("SQL_DATABASE")))
 SQL_USER = os.getenv("SQL_USER")
 SQL_PASS = os.getenv("SQL_PASS")
-SQL_DATABASE_ADMIN = re.sub("[^A-Za-z0-9]", "", os.getenv("SQL_DATABASE_ADMIN"))
+SQL_DATABASE_ADMIN = re.sub("[^A-Za-z0-9]", "", str(os.getenv("SQL_DATABASE_ADMIN")))
 
 import logging
+
 from src.color import color
 
 logger_info = logging.getLogger(__name__)
@@ -23,10 +24,11 @@ console_handler = logging.StreamHandler()
 logger_info.addHandler(console_handler)
 logger_info.setLevel(logging.INFO)
 
-class DBConnect():
+class DBConnect:
     """ Соединение с Базой Данных.
     Проверка на наличие Бд и таблиц в ней
     """
+    status:str = ''
 
     @staticmethod
     def connect() -> Any:
@@ -45,7 +47,7 @@ class DBConnect():
 
 
     def __init__(self) -> None:
-        DBConnect.status = 'Ok'
+        # DBConnect.status = 'Ok'
         self.__cur = None
         try:
             conn = psycopg2.connect(
@@ -148,7 +150,7 @@ company_id int REFERENCES company(company_id) NOT NULL
         DBConnect.status = 'Ok'
 
     @staticmethod
-    def select_(sql_txt: str) -> list:
+    def select_(sql_txt: str) -> Any:
         """ Соединяется с БД и
         отправляет SQL запрос.
         Возвращает список строк или пустой список
@@ -175,7 +177,8 @@ company_id int REFERENCES company(company_id) NOT NULL
             conn.close()
             return rows
 
-    def drop_all(self):
+    @staticmethod
+    def drop_all() -> None:
         """удаляет полностью БД"""
 
         try:

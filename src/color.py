@@ -1,8 +1,6 @@
 from config import COLOR
-# color
 
-
-def color(color_,txt) -> str:
+def color(color_:str,txt:str) -> str:
     """ Делает выводимый текст цветным
     ввод: цвет: str, текст: str"""
     colors = {

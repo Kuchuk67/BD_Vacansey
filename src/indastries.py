@@ -1,16 +1,18 @@
-import os
-import requests
 import json
-from typing import Any
-from src.color import color
+import os
 
 #from config import PATH_HOME
 import re
+from typing import Any
+
+import requests
+
+from src.color import color
 
 
 class Industries:
     """ Класс определения id отрасли промышленности"""
-    dict_industries = {}
+    dict_industries:dict = {}
 
     def __init__(self) -> None:
 

@@ -1,4 +1,6 @@
 import requests
+from typing import Any
+
 """import logging
 logger_info = logging.getLogger(__name__)
 # Создаем хендлер для вывода в консоль
@@ -9,49 +11,44 @@ logger_info.setLevel(logging.INFO)"""
 class GetAPI:
     """ Выполняет API-запрос и
     получает данные о работодателе и его вакансии """
-    def __init__(self):
-        #self.__status = 'init'
-        self.__url_em = 'https://api.hh.ru/employers/'
-        self.__url_vac = 'https://api.hh.ru/vacancies'
-        self.__params = {'text': '', 'page': 0, 'per_page': 100, 'employer_id': 0}
-        self.__headers = {'User-Agent': 'HH-User-Agent'}
-        self.__status = '0'
+    def __init__(self) -> None:
+        self.__url_em:str = 'https://api.hh.ru/employers/'
+        self.__url_vac:str = 'https://api.hh.ru/vacancies'
+        self.__params:dict = {'text': '', 'page': 0, 'per_page': 100, 'employer_id': 0}
+        self.__headers:dict = {'User-Agent': 'HH-User-Agent'}
+        self.__status = 0
 
 
-    def company(self, id_hh) -> dict:
+    def company(self, id_hh:int) -> Any:
         """ Возвращает словарь с данными по компании"""
-
-
-        response = {}
+        response:Any = []
         # отправка API - запроса по компании 3 попытки
         for _ in range(3):
             response = requests.get(self.__url_em + str(id_hh), headers={'User-Agent': 'HH-User-Agent'})
             self.__status = response.status_code
-            #print(self.__status)
             if self.__status == 200:
-                #print('.', end='')
                 break
         if self.__status == 200: result = response.json()
-        else: result = {}
+        else: result = []
 
         return result
 
 
     @property
-    def status(self) -> str:
+    def status(self) -> int:
         """ Возвращает статус API-запроса. '200' - всё хорошо """
         pass
         return self.__status
 
 
 
-    def vacancies(self, id_hh) -> list:
+    def vacancies(self, id_hh:int) -> list:
         """ Возвращает список словарей с вакансиями
             список содержит словари по 100 вакансий"""
         self.__params['employer_id'] = id_hh
         #print(self.__params)
-        response = {}
-        result = []
+        response:Any = {}
+        result:list = []
         while True:
             # отправка API - запроса по компании 3 попытки
             # https://api.hh.ru/vacancies?employer_id=1740

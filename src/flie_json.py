@@ -1,11 +1,13 @@
+import json
 import os
 import typing
+
 from config import PATH_HOME
-import json
+
 
 class FileJSON():
     """ Класс матодов сохранения словарей в json-файл"""
-    def __init__(self):
+    def __init__(self) -> None:
         if not os.path.exists(os.path.join(PATH_HOME, "data")):
             os.mkdir(os.path.join(PATH_HOME, "data"))
         #self.__path_to_file = os.path.join(PATH_HOME, "data")
