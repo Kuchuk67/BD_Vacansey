@@ -54,16 +54,18 @@ GROUP BY company.name """
         return result
 
 
-    def get_vacancies_with_keyword(self, word:str):
+    def get_vacancies_with_keyword(self, word:str, snippet = False):
 
         """ Получает список всех вакансий, в названии которых содержатся переданные в метод слова, например python."""
         sql = """SELECT  vacancies_name, salary_avg, snippet, responsibility, schedule, 'https://hh.ru/vacancy/' || vacancies_id as url  FROM vacancies 
-WHERE snippet  LIKE '%s'
-OR responsibility  LIKE '%s'
-OR schedule  LIKE '%s'
-OR vacancies_name  LIKE '%s'
-""" % ( word,word,word,word,)
-
+WHERE vacancies_name  ILIKE '%s'
+""" % ( word,)
+        if snippet:
+            sql = sql + """
+            OR snippet  ILIKE '%s'
+OR responsibility  ILIKE '%s'
+OR schedule  ILIKE '%s'
+            """ % ( word,word,word,)
         DBConnect.status = ''
         result = DBConnect.select_(sql)
         DBManager.error_handling(result, DBConnect.status)

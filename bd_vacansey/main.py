@@ -100,16 +100,20 @@ def main():
                     print(status)
 
 
-                if user_input == '5': # 5. Поиск по ключевому слову
+                if user_input == '5' or user_input == '6': # 5-6. Поиск по ключевому слову
                     word = input("Введите ключевое слово: ")
                     print("\n\n")
                     word = f"%{word}%"
-                    q = select.get_vacancies_with_keyword(word)
+                    snippet = False
+                    if user_input == '6': snippet = True
+                    q = select.get_vacancies_with_keyword(word, snippet)
                     if OUTPUT_ON_MONITOR:
                         for row in q:
                             print(f"{color('white', row[0])}  {row[1]},\n{row[2]}\n{row[3]}\n{row[4]} \n{row[5]}\n ")
                     dict_for_json = file.dict_for_json(q, ['vacancies_name', 'salary_avg', 'snippet', 'responsibility',
                                                            'schedule', 'url'])
+
+
                     status = file.save(dict_for_json, 'get_vacancies_with_keyword.json')
                     print(status)
 
