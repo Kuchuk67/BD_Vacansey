@@ -26,7 +26,6 @@ GROUP BY company.name """
     def get_all_vacancies(self):
         """ Получает список всех вакансий с указанием названия компании,
          названия вакансии и зарплаты и ссылки на вакансию. hh.ru/vacancy/112968986"""
-        #sql = """SELECT AVG(vacancies.salary_avg) FROM vacancies WHERE salary_avg > 0 """
         sql = """SELECT company.name, vacancies_name, salary_avg, 'https://hh.ru/vacancy/' || vacancies_id as url          
         FROM vacancies JOIN company ON company.company_id=vacancies.company_id; """
         DBConnect.status = ''
@@ -34,7 +33,7 @@ GROUP BY company.name """
         DBManager.error_handling(result, DBConnect.status)
         return result
 
-    def get_avg_salary(self):
+    def get_avg_salary(self) -> int:
         """ Получает среднюю зарплату по вакансиям."""
         #sql = """SELECT company.name, AVG(vacancies.salary_avg)
 #FROM vacancies RiGHT JOIN company ON company.company_id = vacancies.company_id

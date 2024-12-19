@@ -26,6 +26,7 @@ def load_data():
         cur = conn.cursor()
         ins.industries_insert(cur)
         conn.commit()
+
     # Подключаемся к API
     data_api = GetAPI()
 
