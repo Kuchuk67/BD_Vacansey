@@ -10,6 +10,3 @@ COLOR = True
 
 # False - output only in file, not monitor
 OUTPUT_ON_MONITOR = True
-
-
-
