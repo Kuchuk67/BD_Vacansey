@@ -14,16 +14,19 @@ class ListData:
         где только те поля, что будут занесены в БД"""
         result = []
         for item in list_company_json:
-            # if item.get('id','0') != 0:
+
             try:
-                result.append(
+                """result.append(
                     {
                         "company_id": item.get("id", "0"),
                         "name": item.get("name"),
                         "site_url": item.get("site_url"),
                         "industries": item.get("industries")[0].get("id"),
-                    }
+                    })"""
+                result.append(
+                    (item.get("id", "0"),item.get("name"),item.get("site_url"),item.get("industries")[0].get("id"),)
                 )
+
             except Exception:
                 print(color("red", "Ошибка добавления компании"), item)
         return result
@@ -66,15 +69,15 @@ class ListData:
                     snippet = item1.get("snippet").get("requirement")
                     if not snippet:
                         snippet = ""
-                    snippet = snippet.replace("'", " ")
+                    snippet:str = snippet.replace("'", " ")
                     responsibility = item1.get("snippet").get("responsibility")
                     if not responsibility:
                         responsibility = ""
-                    responsibility = responsibility.replace("'", " ")
+                    responsibility:str = responsibility.replace("'", " ")
                     schedule = item1.get("schedule").get("name")
                     if not schedule:
                         schedule = ""
-                    schedule = schedule.replace("'", " ")
+                    schedule:str = schedule.replace("'", " ")
                     a, b = salary_from, salary_to
                     if a == 0:
                         a = b
@@ -82,7 +85,7 @@ class ListData:
                         b = a
                     salary_avg = (a + b) / 2
 
-                    result.append(
+                    """result.append(
                         {
                             "vacancies_id": item1.get("id", "0"),
                             "vacancies_name": item1.get("name"),
@@ -94,9 +97,14 @@ class ListData:
                             "responsibility": responsibility,
                             "schedule": schedule,
                         }
+                    )"""
+                    result.append(
+                        ( item1.get("id", "0"), item1.get("name"), salary_from, salary_to,
+                            salary_avg, address, snippet, responsibility, schedule,
+                        )
                     )
                 except Exception as er:
 
                     print(color("red", f"Ошибка добавления компании {er}"))
-        # print(len(result))
+        #print(len(result))
         return result

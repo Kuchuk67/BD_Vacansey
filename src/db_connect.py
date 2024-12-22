@@ -88,7 +88,6 @@ class DBConnect:
                 DBConnect.status = "Ok"
                 logger_info.info(color("green", "Ok"))
                 # загрузить таблицу данными
-                # DBConnect.industries_insert(conn, cur)
 
         if not ("company",) in rows:
             logger_info.info(color("grey", "создается таблица company"))

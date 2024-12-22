@@ -5,7 +5,8 @@ from src.color import color
 class Industries:
     """Класс определения id отрасли промышленности"""
 
-    dict_industries: dict = {}
+    #dict_industries: dict = {}
+    dict_industries: list = []
 
     def __init__(self) -> None:
 
@@ -20,7 +21,8 @@ class Industries:
             name = industry["name"]
             id_ = industry["id"]
             industries_ = industry.get("industries", None)
-            Industries.dict_industries[id_] = name
+            #Industries.dict_industries[id_] = name
+            Industries.dict_industries.append((id_,name,))
             if industries_:
                 Industries.industries(industries_)
 

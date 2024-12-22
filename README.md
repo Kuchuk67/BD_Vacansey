@@ -97,12 +97,8 @@ conn.commit()
 
 ##  remove_db
 удаляет данные из таблиц. 
-Получает список с литерами таблиц: ['v', 'c', 'i']:  
-v - удалить данные в таблице vacancies;  
-c - удалить company;  
-i - удалить industries;  
 
-``` ins.remove_db(['v', 'c', 'i']) ```
+``` ins.remove_db() ```
 
 ---
 # DBManager
