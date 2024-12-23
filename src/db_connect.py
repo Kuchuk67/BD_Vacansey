@@ -6,7 +6,7 @@ from typing import Any
 from psycopg2 import sql
 import psycopg2
 from dotenv import load_dotenv
-
+from config import PATH_HOME
 
 # Загрузка переменных из .env-файла
 load_dotenv()
@@ -76,7 +76,8 @@ class DBConnect:
             conn.autocommit = True
             cur = conn.cursor()
 
-            with open('create_table.sql', 'r') as inserts:
+            file_name = os.path.join(PATH_HOME, "src", 'create_table.sql')
+            with open(file_name, 'r') as inserts:
                 sql = inserts.read()
 
             cur.execute(sql)
