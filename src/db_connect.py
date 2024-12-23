@@ -80,13 +80,12 @@ class DBConnect:
             file_name = os.path.join(PATH_HOME, "src", 'create_table.sql')
             with open(file_name, 'r') as inserts:
                 sql_file = inserts.read()
-
             cur.execute(sql_file)
 
             cur.close()
             conn.close()
 
-    def select_(self, sql_txt: str) -> Any:
+    def select_(self, sql_txt: str) -> list:
         """Соединяется с БД и
         отправляет SQL запрос.
         Возвращает список строк или пустой список
