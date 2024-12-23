@@ -27,22 +27,24 @@ class DBInsert:
         logger_info.info(color("green", industries_load))
 
         # Заполнение БД industries
-        args_str = [(x) for x in Industries.dict_industries]
-        self.__cur.executemany("INSERT INTO industries (industries_id, industries_name)  VALUES (%s,%s)", args_str)
+        self.__cur.executemany(
+            "INSERT INTO industries (industries_id, industries_name)  VALUES (%s,%s)",
+                               Industries.dict_industries
+                               )
 
 
     def company_insert(self, list_companies: list) -> None:
         """Заполнение БД company"""
-        args_str = [(x) for x in list_companies]
-        self.__cur.executemany("INSERT INTO company VALUES (%s,%s,%s,%s)", args_str)
+        self.__cur.executemany("INSERT INTO company VALUES (%s,%s,%s,%s)", list_companies)
 
 
     def vacancies_insert(self, vacancies: list, company_id: int) -> None:
         """Заполнение БД vacancies"""
-        # Код для проверки того, что записывается в базу вакансии
 
-        args_str = [(x) for x in vacancies]
-        self.__cur.executemany("INSERT INTO vacancies VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) ON CONFLICT (vacancies_id) DO NOTHING;", args_str)
+        self.__cur.executemany(
+            "INSERT INTO vacancies VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) ON CONFLICT (vacancies_id) DO NOTHING;",
+            vacancies
+        )
 
 
         # f = open(str(company_id), 'w', encoding='utf-8')
