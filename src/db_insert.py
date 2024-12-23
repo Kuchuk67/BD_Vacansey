@@ -1,7 +1,6 @@
 import logging
 from typing import Any
 from src.color import color
-from src.db_connect import DBConnect
 from src.indastries import Industries
 
 logger_info = logging.getLogger(__name__)
@@ -11,123 +10,57 @@ logger_info.addHandler(console_handler)
 logger_info.setLevel(logging.INFO)
 
 
-class DBInsert(DBConnect):
-    """ Подключается к БД
-    Содержит методы для записи данных в таблицы"""
+class DBInsert:
+    """Содержит методы для записи данных в таблицы"""
 
+    def __init__(self, connect: Any):
+        # connect = DBConnect()
+        # self.connect =  DBConnect.connect()
+        self.__cur = connect.cursor()
 
-    def industries_insert(self, cur:Any) -> None:
-        """  Заполнение БД industries"""
-        print("========",type(cur))
-        DBInsert.status = 'Ok'
+    def industries_insert(self) -> None:
+        """Заполнение БД industries"""
+
         # Загрузка API отраслей промышленности
         industries = Industries()
         industries_load = industries.load()
-        logger_info.info(color('green', industries_load))
+        logger_info.info(color("green", industries_load))
 
         # Заполнение БД industries
-        i, separate, sql = 0, "", "INSERT INTO industries VALUES "
-        for key, value in Industries.dict_industries.items():
-            sql = sql + f"{separate} ({key}, '{value}')"
-            separate = ", "
-        sql = sql + ";"
-        #print(sql)
-        try:
-            cur.execute(sql)
-        except Exception as er:
-            logger_info.error(color('red', f"Ошибка записи отраслей в БД.\n {er}"))
+        args_str = ",".join(self.__cur.mogrify("(%s,%s)", x).decode("utf-8") for x in Industries.dict_industries)
+        self.__cur.execute("INSERT INTO industries (industries_id, industries_name) VALUES " + args_str)
 
+    def company_insert(self, list_companies: list) -> None:
+        """Заполнение БД company"""
+        args_str = ",".join(self.__cur.mogrify("(%s,%s,%s,%s)", x).decode("utf-8") for x in list_companies)
+        self.__cur.execute("INSERT INTO company VALUES " + args_str)
 
+    def vacancies_insert(self, vacancies: list, company_id: int) -> None:
+        """Заполнение БД vacancies"""
+        # Код для проверки того, что записывается в базу вакансии
 
-    def company_insert(self, cur:Any, list_companies: list) -> None:
-        """ Заполнение БД company"""
-        i, separate, sql = 0, "", "INSERT INTO company VALUES "
-        for list_company in list_companies:
+        args_str = ",".join(
+            self.__cur.mogrify("(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", x).decode("utf-8") for x in vacancies
+        )
+        self.__cur.execute("INSERT INTO vacancies VALUES " + args_str + " ON CONFLICT (vacancies_id) DO NOTHING;")
 
-            sql = sql + (f"{separate} ({list_company.get('company_id')}, '{list_company.get('name')}', "
-                         f"'{list_company.get('site_url')}',  "
-                         f"'{list_company.get('industries')}' )")
-            separate = ", "
-        sql = sql + ";"
-        cur.execute(sql)
+        # f = open(str(company_id), 'w', encoding='utf-8')
+        # f.write(args_str)
+        # f.close()
 
-
-    def vacancies_insert(self, cur:Any, vacancies:list, company_id:int) -> None:
-        """ Заполнение БД vacancies"""
-        # cur.execute('delete FROM vacancies;')
-        i, separate, sql = 0, " ", "INSERT INTO vacancies VALUES "
-        for vacancy in vacancies:
-            i += 1
-            sql = sql + (f"{separate} ( DEFAULT ,"
-                             f"{vacancy.get('vacancies_id')},"
-                             f"'{vacancy.get('vacancies_name')}',"
-                             f"{vacancy.get('salary_from')},"
-                             f"{vacancy.get('salary_to')},"
-                             f"{vacancy.get('salary_avg')},"
-                             f"'{vacancy.get('address')}',"
-                             f"'{vacancy.get('snippet')}',"
-                             f"'{vacancy.get('responsibility')}', "
-                             f"'{vacancy.get('schedule')}', "
-                             f"{int(company_id)} )")
-            separate = ", "
-        sql = sql + ";"
-
-        """ # Код для проверки того, что записывается в базу вакансии
-        f = open(str(company_id), 'w', encoding='utf-8') 
-        f.write(sql)
-        f.close()"""
-
-        if i > 0:
-            try:
-                cur.execute(sql)
-            except Exception as er:
-                DBInsert.status = 'Error'
-                logger_info.error(color('red', f"Ошибка записи вакансии в БД.\n {er}"))
-        else:
-            print('API вернул пустую строку')
-
-
-    def remove_db(self, db_for_del: list) -> None:
-        """ удаляет данные из таблиц. Вход список с литерами таблиц: ['v', 'c', 'i']:
-        v - удалить данные в таблице vacancies;
-        c - удалить company;
-        i - удалить industries;
-
-        """
+    def remove_db(self, connect: Any) -> None:
+        """удаляет данные из таблиц."""
 
         # .connect с БД
-        conn = DBConnect.connect()
-        cur = conn.cursor()
-        if 'v' in db_for_del:
-            try:
-                sql_txt = "delete FROM vacancies"
-                cur.execute(sql_txt)
-            except Exception as er:
-                logger_info.error(color('red', f"Ошибка удаления данных таблицы vacancies.\n {er}"))
-            else:
-                #print("удалено vacancies")
-                conn.commit()
+        # conn = DBConnect.connect()
+        # cur = self.__cur.cursor()
+        try:
+            sql_txt = "delete FROM vacancies; delete FROM company; delete FROM industries"
+            self.__cur.execute(sql_txt)
+        except Exception as er:
+            logger_info.error(color("red", f"Ошибка удаления данных таблиц.\n {er}"))
+        else:
+            connect.commit()
 
-        if 'c' in db_for_del:
-            try:
-                sql_txt = "delete FROM company"
-                cur.execute(sql_txt)
-            except Exception as er:
-                logger_info.error(color('red', f"Ошибка удаления данных таблицы company.\n {er}"))
-            else:
-                #print("удалено company")
-                conn.commit()
-
-        if 'i' in db_for_del:
-            try:
-                sql_txt = "delete FROM industries"
-                cur.execute(sql_txt)
-            except Exception as er:
-                logger_info.error(color('red', f"Ошибка удаления данных таблицы industries.\n {er}"))
-            else:
-                #print("удалено industries")
-                conn.commit()
-
-
-
-
+    def close(self) -> None:
+        self.__cur.close()
