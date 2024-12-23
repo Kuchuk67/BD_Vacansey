@@ -15,7 +15,7 @@ logger_info.setLevel(logging.INFO)
 class DBManager:
     """Класс методов работы с БД"""
 
-    def get_companies_and_vacancies_count(self,connect:DBConnect) -> Any:
+    def get_companies_and_vacancies_count(self, connect: DBConnect) -> Any:
         """Получает список всех компаний и количество вакансий у каждой компании."""
 
         sql = """SELECT company.name, count(vacancies.vacancies_id)
@@ -26,7 +26,7 @@ GROUP BY company.name """
         DBManager.error_handling(result, connect.status)
         return result
 
-    def get_all_vacancies(self, connect:DBConnect) -> Any:
+    def get_all_vacancies(self, connect: DBConnect) -> Any:
         """Получает список всех вакансий с указанием названия компании,
         названия вакансии и зарплаты и ссылки на вакансию. hh.ru/vacancy/112968986"""
         sql = """SELECT company.name, vacancies_name, salary_avg, 'https://hh.ru/vacancy/' || vacancies_id as url
@@ -36,7 +36,7 @@ FROM vacancies JOIN company ON company.company_id=vacancies.company_id; """
         DBManager.error_handling(result, connect.status)
         return result
 
-    def get_avg_salary(self, connect:DBConnect) -> int:
+    def get_avg_salary(self, connect: DBConnect) -> int:
         """Получает среднюю зарплату по вакансиям."""
         # sql = """SELECT company.name, AVG(vacancies.salary_avg)
         # FROM vacancies RiGHT JOIN company ON company.company_id = vacancies.company_id
@@ -47,7 +47,7 @@ FROM vacancies JOIN company ON company.company_id=vacancies.company_id; """
         DBManager.error_handling(result, connect.status)
         return int(result[0][0])
 
-    def get_vacancies_with_higher_salary(self,connect:DBConnect, salary: int ) -> Any:
+    def get_vacancies_with_higher_salary(self, connect: DBConnect, salary: int) -> Any:
         """Получает список всех вакансий, у которых зарплата выше средней по всем вакансиям."""
         sql = """SELECT vacancies_name, salary_avg  FROM vacancies WHERE salary_avg > """ + str(salary)
         connect.status = ""
@@ -55,11 +55,13 @@ FROM vacancies JOIN company ON company.company_id=vacancies.company_id; """
         DBManager.error_handling(result, connect.status)
         return result
 
-    def get_vacancies_with_keyword(self, connect:DBConnect,  word: str, snippet: bool = False) -> Any:
+    def get_vacancies_with_keyword(self, connect: DBConnect, word: str, snippet: bool = False) -> Any:
         """Получает список всех вакансий, в названии которых содержатся переданные в метод слова, например python."""
         sql = """SELECT vacancies_name, salary_avg, snippet, responsibility,
 schedule, 'https://hh.ru/vacancy/' || vacancies_id as url FROM vacancies
-WHERE vacancies_name ILIKE '%s'""" % (word,)
+WHERE vacancies_name ILIKE '%s'""" % (
+            word,
+        )
         if snippet:
             sql = (
                 sql

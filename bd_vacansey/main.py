@@ -5,8 +5,9 @@ from src.color import color
 from src.db_connect import DBConnect
 from src.db_manager import DBManager
 
-def is_salary_null(salary:int) -> str:
-    """ Обработка вывода зарплаты.
+
+def is_salary_null(salary: int) -> str:
+    """Обработка вывода зарплаты.
     Возвращает строку '- 123 руб.' если на входе число больше нуля,
     иначе пустая строка"""
     if salary == 0:
@@ -41,7 +42,7 @@ def main() -> None:
         if user_input == "2":  # Работа с вакансиями в БД
             select = DBManager()
 
-            while True:   # Подменю
+            while True:  # Подменю
                 user_input = menu_db()
                 if user_input == "9":  # 9. Вернуться
                     break
@@ -49,7 +50,7 @@ def main() -> None:
                 # 1. Список компаний и количество вакансий
                 if user_input == "1":
                     x = select.get_companies_and_vacancies_count(connect)
-                    output_in_files(x, ["company", "vacancies_count"],"get_companies_and_vacancies_count.json")
+                    output_in_files(x, ["company", "vacancies_count"], "get_companies_and_vacancies_count.json")
                     for row in x:
                         print(f"{color('white', row[0])} - {row[1]} вакансий")
 
@@ -60,7 +61,10 @@ def main() -> None:
                     number = 0
                     for row in x:
                         number += 1
-                        print(f"{number} {color('white', row[0])} - {row[1]}  {is_salary_null(row[2])}  - https://hh.ru/vacancy/{row[3]}")
+                        print(
+                            f"{number} {color('white', row[0])} - {row[1]}  "
+                            f"{is_salary_null(row[2])}  - https://hh.ru/vacancy/{row[3]}"
+                        )
 
                 # 3. Средняя зарплата по вакансиям
                 if user_input == "3":
@@ -86,18 +90,23 @@ def main() -> None:
                     if user_input == "6":
                         snippet = True
                     q = select.get_vacancies_with_keyword(connect, word, snippet)
-                    output_in_files(q,
+                    output_in_files(
+                        q,
                         ["vacancies_name", "salary_avg", "snippet", "responsibility", "schedule", "url"],
-                         "get_vacancies_with_keyword.json")
+                        "get_vacancies_with_keyword.json",
+                    )
                     number = 0
                     for row in q:
-                        number+=1
-                        print(f"{number}. {color('white', row[0])}  {is_salary_null(row[1])}\n{row[2]}\n{row[3]}\n{row[4]} \n{row[5]}\n ")
-
+                        number += 1
+                        print(
+                            f"{number}. {color('white', row[0])}  "
+                            f"{is_salary_null(row[1])}\n{row[2]}\n{row[3]}\n{row[4]} \n{row[5]}\n "
+                        )
 
         if user_input == "3":
             connect.close()
             quit(print("\nЗавершение работы программы"))
+
 
 if __name__ == "__main__":
     main()

@@ -17,14 +17,19 @@ class ListData:
 
             try:
                 """result.append(
-                    {
-                        "company_id": item.get("id", "0"),
-                        "name": item.get("name"),
-                        "site_url": item.get("site_url"),
-                        "industries": item.get("industries")[0].get("id"),
-                    })"""
+                {
+                    "company_id": item.get("id", "0"),
+                    "name": item.get("name"),
+                    "site_url": item.get("site_url"),
+                    "industries": item.get("industries")[0].get("id"),
+                })"""
                 result.append(
-                    (item.get("id", "0"),item.get("name"),item.get("site_url"),item.get("industries")[0].get("id"),)
+                    (
+                        item.get("id", "0"),
+                        item.get("name"),
+                        item.get("site_url"),
+                        item.get("industries")[0].get("id"),
+                    )
                 )
 
             except Exception:
@@ -78,7 +83,6 @@ class ListData:
                         responsibility = item1.get("snippet").get("responsibility")
                         responsibility = responsibility.replace("'", " ")
 
-
                     if not item1.get("schedule").get("name"):
                         schedule = ""
                     else:
@@ -92,12 +96,21 @@ class ListData:
                     salary_avg = (a + b) / 2
 
                     result.append(
-                        ( item1.get("id", "0"), item1.get("name"), salary_from, salary_to,
-                            salary_avg, address, snippet, responsibility, schedule, company
+                        (
+                            item1.get("id", "0"),
+                            item1.get("name"),
+                            salary_from,
+                            salary_to,
+                            salary_avg,
+                            address,
+                            snippet,
+                            responsibility,
+                            schedule,
+                            company,
                         )
                     )
                 except Exception as er:
 
                     print(color("red", f"Ошибка добавления компании {er}"))
-        #print(len(result))
+        # print(len(result))
         return result
