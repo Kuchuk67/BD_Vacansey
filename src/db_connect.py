@@ -79,9 +79,9 @@ class DBConnect:
             # загрузит DML-код из файла для создания таблиц
             file_name = os.path.join(PATH_HOME, "src", 'create_table.sql')
             with open(file_name, 'r') as inserts:
-                sql = inserts.read()
+                sql_file = inserts.read()
 
-            cur.execute(sql)
+            cur.execute(sql_file)
 
             cur.close()
             conn.close()
