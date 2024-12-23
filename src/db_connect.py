@@ -37,18 +37,19 @@ class DBConnect:
             quit()
 
     @property
-    def conn(self):
+    def conn(self) -> object:
         return self.__conn
 
 
-    def close(self):
+    def close(self) -> None:
         self.__conn.close()
 
     def __init__(self) -> None:
-        self.__conn: Any = None
+
         self.status: str = ""
         try:
             conn = psycopg2.connect(host=SQL_HOST, database=SQL_DATABASE_ADMIN, user=SQL_USER, password=SQL_PASS)
+            self.__conn = conn
         except Exception as e:
             logger_info.error(color("red", f"Error: Ошибка соединения с БД {e}"))
             quit()
@@ -121,13 +122,11 @@ class DBConnect:
         except Exception:
             self.status = "Error"
             cur.close()
-            # conn.close()
             return []
         else:
             rows = cur.fetchall()
             self.status = "Ok"
             cur.close()
-            # conn.close()
             return rows
 
 

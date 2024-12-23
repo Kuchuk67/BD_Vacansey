@@ -13,7 +13,7 @@ logger_info.setLevel(logging.INFO)
 
 class DBInsert:
     """ Содержит методы для записи данных в таблицы"""
-    def __init__(self,connect):
+    def __init__(self,connect:Any):
         #connect = DBConnect()
         #self.connect =  DBConnect.connect()
         self.__cur = connect.cursor()
@@ -45,12 +45,12 @@ class DBInsert:
         args_str = ','.join(self.__cur.mogrify("(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", x).decode('utf-8') for x in vacancies)
         self.__cur.execute("INSERT INTO vacancies VALUES " + args_str + " ON CONFLICT (vacancies_id) DO NOTHING;")
 
-        f = open(str(company_id), 'w', encoding='utf-8')
-        f.write(args_str)
-        f.close()
+        # f = open(str(company_id), 'w', encoding='utf-8')
+        # f.write(args_str)
+        # f.close()
 
 
-    def remove_db(self, connect) -> None:
+    def remove_db(self, connect:Any) -> None:
         """удаляет данные из таблиц.  """
 
         # .connect с БД
@@ -64,5 +64,5 @@ class DBInsert:
         else:
             connect.commit()
 
-    def close(self):
+    def close(self) -> None:
         self.__cur.close()

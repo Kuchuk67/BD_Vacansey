@@ -32,12 +32,11 @@ class ListData:
         return result
 
     @classmethod
-    def vacancy(cls, list_vacancy_json: list, company) -> list:
+    def vacancy(cls, list_vacancy_json: list, company: str) -> list:
         """Подготавливает список вакансии для записи в БД.
         Выбирает из json только те поля, что будут занесены в БД вакансии
         Несуществующие адреса заменяет пробелами
         неуказанные запрлаты заменяет 0"""
-        # print(list_vacancy_json)
         result = []
         for item in list_vacancy_json:  # [5]['items']:
             print(".", end="")
@@ -66,18 +65,25 @@ class ListData:
                         address = ""
                     if not address:
                         address = ""
-                    snippet = item1.get("snippet").get("requirement")
-                    if not snippet:
+
+                    if not item1.get("snippet").get("requirement"):
                         snippet = ""
-                    snippet:str = snippet.replace("'", " ")
-                    responsibility = item1.get("snippet").get("responsibility")
-                    if not responsibility:
+                    else:
+                        snippet = item1.get("snippet").get("requirement")
+                        snippet = snippet.replace("'", " ")
+
+                    if not item1.get("snippet").get("responsibility"):
                         responsibility = ""
-                    responsibility:str = responsibility.replace("'", " ")
-                    schedule = item1.get("schedule").get("name")
-                    if not schedule:
+                    else:
+                        responsibility = item1.get("snippet").get("responsibility")
+                        responsibility = responsibility.replace("'", " ")
+
+
+                    if not item1.get("schedule").get("name"):
                         schedule = ""
-                    schedule:str = schedule.replace("'", " ")
+                    else:
+                        schedule = item1.get("schedule").get("name")
+                        schedule = schedule.replace("'", " ")
                     a, b = salary_from, salary_to
                     if a == 0:
                         a = b
@@ -85,19 +91,6 @@ class ListData:
                         b = a
                     salary_avg = (a + b) / 2
 
-                    """result.append(
-                        {
-                            "vacancies_id": item1.get("id", "0"),
-                            "vacancies_name": item1.get("name"),
-                            "salary_from": salary_from,
-                            "salary_to": salary_to,
-                            "salary_avg": salary_avg,
-                            "address": address,
-                            "snippet": snippet,
-                            "responsibility": responsibility,
-                            "schedule": schedule,
-                        }
-                    )"""
                     result.append(
                         ( item1.get("id", "0"), item1.get("name"), salary_from, salary_to,
                             salary_avg, address, snippet, responsibility, schedule, company

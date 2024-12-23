@@ -9,4 +9,4 @@ LIST_COMPANY = [1740, 15478, 84585, 9999999999, 2381, 780654, 1057, 3776, 733, 1
 COLOR = True
 
 # False - output only in file, not monitor
-OUTPUT_ON_MONITOR = True
+OUTPUT_IN_FILES = True

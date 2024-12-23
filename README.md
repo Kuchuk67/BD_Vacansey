@@ -42,17 +42,28 @@
 * Создается таблица vacancies.
 
 ##  connect
-#### staticmethod
-```with DBConnect.connect() as conn:```
-
+```
+connect = DBConnect()
+connect.connect()
+cur = connect.conn.cursor()
+   ```
 Устанавливает соединение с БД.
 
+## conn
+
+```
+cur = connect.conn.cursor()
+
+```
+Возвращает объект connection
+
 ## select_ 
-#### staticmethod
-Соединяется с БД и отправляет SQL запрос.  
+
+Oтправляет SQL запрос.
+Обрабатывает только запросы SELECT, иначе возвращает ошибку.
 Возвращает список строк или пустой список.  
-Записывает статус ответа в DBConnect.status.  
-Закрывает соединение.
+Записывает статус ответа в атрибут status.  
+
 
 ## drop_all
 удаляет полностью БД
@@ -63,7 +74,6 @@
 
 ``` 
 ins = DBInsert() 
-with DBInsert.connect() as conn:
 ```
 
 ## industries_insert
@@ -105,43 +115,54 @@ conn.commit()
 Класс методов организации запросов к БД
 
 ## get_companies_and_vacancies_count
+Принимает объект класса DBConnect
 Получает список всех компаний и количество вакансий у каждой компании.  
 Возвращает список строк и DBConnect.status = 'Ok'
 ```
- x = select.get_companies_and_vacancies_count()
+connect = DBConnect()
+select = DBManager()
+x = select.get_companies_and_vacancies_count(connect)
 ```
 
 ## get_all_vacancies
-Получает список всех вакансий с указанием названия компании,
+Получает объект класса DBConnect, список всех вакансий с указанием названия компании,
 вакансии и зарплаты и ссылки на вакансию.   
 Возвращает список строк и DBConnect.status = 'Ok'
 ```
-x = select.get_all_vacancies()
+connect = DBConnect()
+select = DBManager()
+x = select.get_all_vacancies(connect)
 ```
 
 ## get_avg_salary
-Получает среднюю зарплату по вакансиям.
+Получает объект класса DBConnect и среднюю зарплату по вакансиям.
 Возвращает int и DBConnect.status = 'Ok'
 ```
-salary = select.get_avg_salary()
+connect = DBConnect()
+select = DBManager()
+salary = select.get_avg_salary(connect)
 ```
 
 ## get_vacancies_with_higher_salary
-Получает список всех вакансий, у которых зарплата выше указанной
+Получает объект класса DBConnect, список всех вакансий, у которых зарплата выше указанной
 по всем вакансиям.  
 Принимает salary: int - зарплата.  
 Возвращает список строк и DBConnect.status = 'Ok'
 ```
-х = select.get_vacancies_with_higher_salary(salary)
+connect = DBConnect()
+select = DBManager()
+х = select.get_vacancies_with_higher_salary(connect, salary)
 ```
 
 ## get_vacancies_with_keyword
-Получает список всех вакансий, в названии и описании которых 
+Получает объект класса DBConnect, список всех вакансий, в названии и описании которых 
 содержатся переданные в метод слова, например 'python'.  
 Принимает word: str - поисковый запрос.  
 Возвращает список строк и DBConnect.status = 'Ok'
 ```
-x = select.get_vacancies_with_keyword(word)
+connect = DBConnect()
+select = DBManager()
+x = select.get_vacancies_with_keyword(connect, word)
 ```
 
 ## error_handling
@@ -151,7 +172,7 @@ x = select.get_vacancies_with_keyword(word)
 или предупреждение при возвращении пустого ответа.  
 Принимает: результат запроса и статус запроса. 
 ```
-DBManager.error_handling(result, DBConnect.status)
+DBManager.error_handling(result, connect.status)
 ```
 
 ---
