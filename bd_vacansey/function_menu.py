@@ -15,9 +15,8 @@ def menu_home() -> str:
             )
         )
         user_input = input("Выберите номер пункта меню: ")
-        if user_input == "3":
-            quit(print("\nЗавершение работы программы"))
-        elif user_input in ["1", "2", "9"]:
+
+        if user_input in ["1", "2", "3", "9"]:
             return user_input
         print("\n\n")
 

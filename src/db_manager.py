@@ -15,15 +15,15 @@ logger_info.setLevel(logging.INFO)
 class DBManager:
     """Класс методов работы с БД"""
 
-    def get_companies_and_vacancies_count(self) -> Any:
+    def get_companies_and_vacancies_count(self,connect) -> Any:
         """Получает список всех компаний и количество вакансий у каждой компании."""
 
         sql = """SELECT company.name, count(vacancies.vacancies_id)
 FROM vacancies RiGHT JOIN company ON company.company_id = vacancies.company_id
 GROUP BY company.name """
-        DBConnect.status = ""
-        result = DBConnect.select_(sql)
-        DBManager.error_handling(result, DBConnect.status)
+        connect.status = ""
+        result = connect.select_(sql)
+        DBManager.error_handling(result, connect.status)
         return result
 
     def get_all_vacancies(self) -> Any:

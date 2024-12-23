@@ -32,7 +32,7 @@ class ListData:
         return result
 
     @classmethod
-    def vacancy(cls, list_vacancy_json: list) -> list:
+    def vacancy(cls, list_vacancy_json: list, company) -> list:
         """Подготавливает список вакансии для записи в БД.
         Выбирает из json только те поля, что будут занесены в БД вакансии
         Несуществующие адреса заменяет пробелами
@@ -100,7 +100,7 @@ class ListData:
                     )"""
                     result.append(
                         ( item1.get("id", "0"), item1.get("name"), salary_from, salary_to,
-                            salary_avg, address, snippet, responsibility, schedule,
+                            salary_avg, address, snippet, responsibility, schedule, company
                         )
                     )
                 except Exception as er:

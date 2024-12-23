@@ -18,15 +18,16 @@ logger_info.setLevel(logging.INFO)
 
 def main() -> None:
     print("\nПоиск вакансий с подключением БД\n")
-
     connect = DBConnect()
+    connect.connect()
+
     # Загрузка списка компаний - проверка наличия данных в таблицах
-    DBConnect.status = ""
     data_db = connect.select_("SELECT True FROM company;")
     # Если данных нет - загрузить.
-    if len(data_db) == 0 and DBConnect.status == "Ok":
-        load_data()
+    if len(data_db) == 0 and connect.status == "Ok":
+        load_data(connect)
 
+    #quit()
     # выводим меню
     while True:
         user_input = menu_home()
@@ -34,7 +35,7 @@ def main() -> None:
         if user_input == "9":  # Удалить БД и закончить работу
             user_input = input("БД будет полностью удалена (y/n):")
             if user_input == "y":
-                DBConnect.drop_all()
+                connect.drop_all()
 
         if user_input == "1":  # Обновить данные в БД по API
             print(color("gray", "Обновление данных в БД"))
@@ -49,7 +50,7 @@ def main() -> None:
                     break
 
                 if user_input == "1":  # 1. Список компаний и количество вакансий
-                    x = select.get_companies_and_vacancies_count()
+                    x = select.get_companies_and_vacancies_count(connect)
                     if OUTPUT_ON_MONITOR:
                         for row in x:
                             print(f"{color('white', row[0])} - {row[1]} вакансий")
@@ -106,6 +107,9 @@ def main() -> None:
                     status = file.save(dict_for_json, "get_vacancies_with_keyword.json")
                     print(status)
 
+        if user_input == "3":
+            connect.close()
+            quit(print("\nЗавершение работы программы"))
 
 if __name__ == "__main__":
     main()

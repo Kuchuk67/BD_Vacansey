@@ -14,21 +14,24 @@ logger_info.addHandler(console_handler)
 logger_info.setLevel(logging.INFO)
 
 
-def load_data() -> None:
+def load_data(connect) -> None:
     """
     Создать если нет БД. Подключится к БД.
     Проверить есть ли данные. Если данных нет - загрузить.
     """
     print(color("gray", "Загрузка данных:"))
-    ins = DBInsert()
+    ins = DBInsert(connect.conn)
     # чистим таблицы
-    ins.remove_db(["v", "c", "i"])
+    ins.remove_db(connect.conn)
+
 
     # Запись в БД отраслей промышленности
-    with DBConnect.connect() as conn:
+    """with connect.connect() as conn:
         cur = conn.cursor()
         ins.industries_insert(cur)
-        conn.commit()
+        conn.commit()"""
+    ins.industries_insert()
+
 
     # Подключаемся к API
     data_api = GetAPI()
@@ -55,30 +58,30 @@ def load_data() -> None:
     list_company = ListData.company(list_company_json)
 
     # Запись в БД компаний
-    with DBConnect.connect() as conn:
-        cur = conn.cursor()
-        ins.company_insert(cur, list_company)
-        conn.commit()
+
+    ins.company_insert(list_company)
+    connect.conn.commit()
 
     # загружаем вакансии по API
-    logger_info.info(color("grey", "Загрузка вакансий по API"))
+    logger_info.info(color("grey", "Загрузка вакансий по API\n"))
     # Загрузка списка компаний
-    companies = DBConnect.select_("SELECT company_id, name FROM company;")
+    companies = connect.select_("SELECT company_id, name FROM company;")
 
     for company in companies:
         print(company[0], company[1], end="")
         # Получаем вакансии по API
         v = data_api.vacancies(company[0])
         # приводим список к нормальному виду для БД
-        vacancies = ListData.vacancy(v)
+        vacancies = ListData.vacancy(v, company[0])
         # Запись в БД вакансии
-        DBConnect.status = "Ok"
-        with DBConnect.connect() as conn:
-            cur = conn.cursor()
-            ins.vacancies_insert(cur, vacancies, company[0])
-            conn.commit()
-        if DBConnect.status == "Ok":
+
+        #cur = connect.conn.cursor()
+        ins.vacancies_insert(vacancies, company[0])
+        connect.conn.commit()
+
+        if connect.status == "Ok":
             print("Ok")
         else:
             print("")
+    ins.close()
     print("\n\n")
