@@ -2,12 +2,11 @@ import os
 import re
 import logging
 from src.color import color
-
-# from abc import ABC, abstractmethod
 from typing import Any
+from psycopg2 import sql
 import psycopg2
 from dotenv import load_dotenv
-from psycopg2 import sql
+
 
 # Загрузка переменных из .env-файла
 load_dotenv()
@@ -64,7 +63,7 @@ class DBConnect:
             # если нет БД, то создадим БД и таблицы
 
             cur.execute(
-                sql.SQL("CREATE DATABASE {basedata} ENCODING 'UTF8' ").format(basedata=sql.Identifier(SQL_DATABASE))
+                psycopg2.sql.SQL("CREATE DATABASE {basedata} ENCODING 'UTF8' ").format(basedata=psycopg2.sql.Identifier(SQL_DATABASE))
             )
             cur.close()
             conn.close()
@@ -76,31 +75,11 @@ class DBConnect:
                 quit()
             conn.autocommit = True
             cur = conn.cursor()
-            cur.execute(
-                """CREATE TABLE industries (
-    industries_id character(10) PRIMARY KEY,
-    industries_name varchar(255) NOT NULL
-    );
-CREATE TABLE company (
-    company_id int PRIMARY KEY,
-    name varchar(255) NOT NULL,
-    site_url varchar(255),
-    industries character(10),
-    FOREIGN KEY (industries) REFERENCES industries(industries_id)
-    );
-CREATE TABLE vacancies (
-    vacancies_id int PRIMARY KEY,
-    vacancies_name varchar(255),
-    salary_from int,
-    salary_to int,
-    salary_avg int,
-    address varchar(255),
-    snippet varchar(255),
-    responsibility varchar(255),
-    schedule varchar(80),
-    company_id int REFERENCES company(company_id) NOT NULL
-        );"""
-            )
+
+            with open('create_table.sql', 'r') as inserts:
+                sql = inserts.read()
+
+            cur.execute(sql)
 
             cur.close()
             conn.close()
